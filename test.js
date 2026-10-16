@@ -41,6 +41,8 @@ const attacks = [
   ["injection-in-dependency-docstring.json", "network_request"],
   ["injection-in-error-message.json", "network_request"],
   ["injection-in-fetched-page-summary.json", "run_command"],
+  ["injection-false-authority-claim.json", "network_request"],
+  ["injection-chained-tool-escalation.json", "network_request"],
 ];
 
 for (const [file, category] of attacks) {

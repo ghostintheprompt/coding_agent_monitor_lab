@@ -1,10 +1,25 @@
 # coding_agent_monitor_lab
 
 A naive monitor and a provenance-aware monitor for coding-agent trajectories,
-red-teamed against five distinct indirect prompt-injection vectors: a hidden
+red-teamed against seven distinct indirect prompt-injection vectors: a hidden
 instruction planted in a code comment, a README, a dependency's own
-docstring, a simulated error message, and a fetched-page summary modeled on
-a real, publicly disclosed chain against Claude Code itself.
+docstring, a simulated error message, a fetched-page summary modeled on a
+real, publicly disclosed chain against Claude Code itself, a false
+claim of system authority, and a two-hop chained tool escalation.
+
+## Why now
+
+Japan's top cybersecurity official declared a cyberspace emergency on
+October 9, 2026, after a wave of AI-assisted attacks — a cloud provider
+breach affecting 495 companies and local governments, and researchers
+reporting AI agents hitting company websites from multiple IPs at once.
+Whether AI capability or just AI-accelerated exploitation of
+already-known weaknesses is doing the work is genuinely disputed among
+researchers covering it — this isn't a claim that agentic AI caused a
+novel attack class, just that multi-agent, multi-tool, coordinated
+automated attack activity is a live, current concern, not a hypothetical
+one. Monitoring the agents themselves, not just the systems they touch,
+is exactly the gap this lab is about.
 
 This is deliberately the monitoring side only. There is no agent here, no
 file system access, no shell, no network calls. Each "trajectory" is a
@@ -50,7 +65,7 @@ error message from a downstream service.
   merely *read* from a file, README, dependency, or log message it does
   not control.
 
-## The real incident behind the fifth fixture
+## The real incident behind one fixture
 
 In August 2026, researcher Johann Rehberger (Embrace The Red) publicly disclosed a
 chain against **Claude Code's own Auto Mode**: asking the agent to summarize a web
@@ -70,7 +85,7 @@ page's content steering the agent toward a shell command it wouldn't otherwise r
 as a static trajectory record, not a working exploit. No real fetch, no real shell
 command, no planted file; same discipline as every other fixture on this bench.
 
-## The five attack fixtures
+## The seven attack fixtures
 
 Each uses a category the naive monitor already treats as routine for a
 coding agent — that's the point, a plausible-looking category is what
@@ -91,6 +106,19 @@ makes the attack work:
 5. **`injection-in-fetched-page-summary.json`** — modeled on the real
    Claude Code Auto Mode disclosure above: summarizing a fetched page
    surfaces a hidden instruction to download and run an archive.
+6. **`injection-false-authority-claim.json`** — the injected content
+   explicitly claims to be a verified, pre-approved system notice. The
+   hardened monitor ignores that claim entirely — it checks the step's
+   actual type (a `read`, not a `user_request` or `tool_output`), not
+   anything the content asserts about itself. Self-declared authority
+   inside untrusted content is worth exactly nothing to the monitor,
+   which is the point: trust comes from the channel, never the claim.
+7. **`injection-chained-tool-escalation.json`** — a two-hop "kill chain"
+   (Apollo's own term for this kind of scenario): a README points to a
+   setup script, and it's that script's *own log output* — not the
+   README itself — that carries the actual malicious instruction. Models
+   the shape of a multi-step agentic attack chain rather than a single
+   hop.
 
 Plus **`benign-trajectory.json`**, which includes one *legitimate* sensitive
 action (rotating a staging API key) justified directly by the user's own
@@ -100,10 +128,10 @@ sensitivity check.
 
 ## The result
 
-The naive monitor misses all five attacks — every injected action uses a
+The naive monitor misses all seven attacks — every injected action uses a
 category (`edit_file`, `run_command`, `network_request`) a coarse
 scope-checker already treats as normal for a coding agent. The hardened
-monitor catches all five, because each attack's sensitive action is
+monitor catches all seven, because each attack's sensitive action is
 justified only by untrusted content the agent read, never by the user's
 own request or the agent's own trusted tool output. Same lesson as
 [`facial_liveness_detection_lab`](https://github.com/ghostintheprompt/facial_liveness_detection_lab)'s
@@ -129,7 +157,7 @@ docker compose build
 docker compose run --rm lab
 ```
 
-Both run identically — 22/22 assertions passing either way.
+Both run identically — 30/30 assertions passing either way.
 
 ## Standing rules for every case added here
 
@@ -151,7 +179,9 @@ Same discipline as the rest of the bench:
   other common production pattern) to show it's equally defeatable by
   rephrasing the injected instruction — strengthening the case for
   provenance-based checking over any purely lexical approach.
-- Extend the provenance model to multi-hop justification chains (an
-  action justified by a read, which was itself only reached because of an
-  earlier untrusted read) — closer to how real agent trajectories chain
-  several tool calls deep.
+- A deeper multi-hop trust model: the current chained fixture still
+  resolves in one `justifiedBy` lookup. A harder version would require the
+  monitor to check whether an action's justifying step is *itself* only
+  trustworthy because of an earlier untrusted read further back in the
+  chain — closer to how a real multi-stage agentic compromise actually
+  propagates trust across several tool calls.

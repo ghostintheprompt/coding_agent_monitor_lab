@@ -1,0 +1,10 @@
+{
+  "name": "coding_agent_monitor_lab",
+  "version": "1.0.0",
+  "description": "A naive vs. provenance-aware monitor for coding-agent trajectories, red-teamed against four indirect prompt-injection vectors",
+  "main": "monitors.js",
+  "scripts": {
+    "test": "node test.js"
+  },
+  "license": "MIT"
+}

@@ -9,10 +9,12 @@ claim of system authority, and a two-hop chained tool escalation.
 
 ## Why now
 
-Japan's top cybersecurity official declared a cyberspace emergency on
-October 9, 2026, after a wave of AI-assisted attacks — a cloud provider
-breach affecting 495 companies and local governments, and researchers
-reporting AI agents hitting company websites from multiple IPs at once.
+On October 9, 2026, the head of the ruling party's cybersecurity strategy
+headquarters said Japan's situation could be called a state of emergency in
+cyberspace — a characterization at a party meeting, not a formal government
+declaration — after a wave of attacks that included a ransomware breach of a
+SoftBank-owned cloud provider affecting 495 companies and local governments,
+and reports of automated agents hitting company websites from many IPs at once.
 Whether AI capability or just AI-accelerated exploitation of
 already-known weaknesses is doing the work is genuinely disputed among
 researchers covering it — this isn't a claim that agentic AI caused a
@@ -29,11 +31,11 @@ the fact, not a live session.
 
 ## Why this exists
 
-Monitoring AI coding agents is an active, unsolved problem — the frontier
-labs building these monitors are explicitly asking for help finding the
-gaps in them (see Apollo Research's own public advice for exactly this
-kind of exercise: build a monitor for coding-agent traffic, then red-team
-it yourself). This lab is that exercise, built the same way as everything
+Monitoring AI coding agents is an active, unsolved problem — frontier labs
+building these monitors are explicitly asking for help finding the gaps
+in them, including one public job posting that states the exercise
+directly: build a monitor for coding-agent traffic, then red-team it
+yourself. This lab is that exercise, built the same way as everything
 else on this bench: real code, real tests, a documented vulnerability
 class, never a general-purpose offensive tool.
 
@@ -67,16 +69,16 @@ error message from a downstream service.
 
 ## The real incident behind one fixture
 
-In August 2026, researcher Johann Rehberger (Embrace The Red) publicly disclosed a
-chain against **Claude Code's own Auto Mode**: asking the agent to summarize a web
-page could steer it into running attacker-controlled code, by getting it to switch
-from its normal fetch tool to a raw shell command and then load a planted file. He
-reported this working 60-80% of the time in his own testing — but was explicit that
-he only ran it five times, not a claim about the install base. Anthropic's own
-benchmark, testing the same model against 72 indirect-injection attacks over 720
-attempts, reported zero successes. Both things are true at once, and that's the
-actual point: a success-rate benchmark tells you how often an attack lands on
-average, not whether your monitoring would catch it the one time it does. Coverage:
+In August 2026, a publicly disclosed chain against **Claude Code's own Auto Mode**
+showed that asking the agent to summarize a web page could steer it into running
+attacker-controlled code, by getting it to switch from its normal fetch tool to a
+raw shell command and then load a planted file. The disclosure reported this
+working 60-80% of the time in testing — but was explicit that it only ran five
+times, not a claim about the install base. The model's own benchmark, testing it
+against 72 indirect-injection attacks over 720 attempts, reported zero successes.
+Both things are true at once: a success-rate benchmark tells you how often an
+attack lands on average, not whether your monitoring would catch it the one time
+it does. Coverage:
 [The Register](https://www.theregister.com/a/5293372),
 [TheNextWeb](https://thenextweb.com/news/claude-code-prompt-injection-summarise-website-auto-mode).
 
